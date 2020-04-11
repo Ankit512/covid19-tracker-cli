@@ -23,7 +23,25 @@ app.get('/', async (req, res, next) => {
     }
     return next();
 });
+// historical chart by country
+app.get('/test/blessed', async (req, res, next) => {
+  const blessedStream = require('./test-blessed')
 
+  let t = await new Promise((resolve, reject) => {
+    blessedStream((data) => {
+      resolve(data)
+    })
+  })
+
+  
+
+  setTimeout(function() {
+    res.send(t+'\r\n'+'\u2800'+'\033[?25h')
+  },100)
+  return null;
+  
+  return next();
+});
 // global historical chart
 app.get(['/history/all/:chartType(cases|deaths)?', '/history/'], async (req, res, next) => {
   const userAgent = req.headers['user-agent'],
@@ -153,6 +171,9 @@ app.get('/history/charts/:country', async (req, res, next) => {
   }
   return next();
 });
+
+
+
 
 app.get('*', (req, res) => res.send(`
 Welcome to COVID-19 Tracker CLI v${pkg.version} by Waren Gonzaga\n

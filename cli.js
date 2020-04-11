@@ -4,6 +4,8 @@ const axios = require('axios'),
       ora = require('ora'),
       spinner = ora({ text: 'Loading...'}),
       covid19 = require('./lib/cli'),
+      covid19GFX = require ('./lib/cli/gfx'),
+      http = require('http'),
       apiBaseURL = "https://corona.lmao.ninja",
       argv = require('yargs')
             .usage('Usage: $0 <country> [options]')
@@ -49,12 +51,46 @@ const getCountry = async (u, country) => {
     spinner.stop();
     return console.log(result);
 }
+
+
+const getCountryGFX = async (u, country) => {
+    let result;
+    let resHead = {}
+    const api = await axios.get(`${apiBaseURL}/countries/${country}`),
+            history = await axios.get(`${apiBaseURL}/v2/historical/${api.data.country}?lastdays=all`),
+            s = api.data,
+            h = history.data,
+            chartType = 'cases';
+
+
+    var http = require('http');
+        http.createServer(function (req, res) {
+            resHead = res
+        return covid19GFX.historyCountryTracker(
+            req,res,
+            s.country, s.cases, s.todayCases, 
+            s.deaths, s.todayDeaths, s.recovered, 
+            s.active, s.critical, s.casesPerOneMillion,
+            s.updated, h, chartType, s.countryInfo)
+    }).listen(1000);
+
+    result = await axios.get('http://localhost:1000')
+    clear()
+    spinner.stop();
+    console.log(result.data)
+    return 'dfdfd'
+    
+    
+
+  
+}
+
        
 (async () => {
     clear();
-    country = argv._[0];      
     spinner.start();
+    country = argv._[0];      
     const all = await axios.get(`${apiBaseURL}/all`);
-    !country && getGlobal(all.data);
-    country && getCountry(all.data, country);
+    getCountryGFX(all.data, country);
+      
 })()
