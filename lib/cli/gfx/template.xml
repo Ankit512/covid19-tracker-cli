@@ -26,7 +26,7 @@
     </item>
 
     <item col="4" row="2" colSpan="3" rowSpan="3">
-      <bar barWidth="9" barSpacing="3" xOffset="1" maxHeight="5" height="100%"  border-type="line" border-fg="#4f4f4f" data-titles="Cases,Deaths,Recovered,Active" data-data="2,4,2,5" />
+      <bar barWidth="9" barSpacing="3" xOffset="1" maxHeight="5" height="100%"  border-type="line" border-fg="grey" data-titles="Cases,Deaths,Recovered,Active" data-data="2,4,2,5" />
     </item>
 
     <item col="7" row="2" colSpan="2" rowSpan="3">
