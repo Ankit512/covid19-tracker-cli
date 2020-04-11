@@ -39,7 +39,7 @@
     </item>
 
     <item col="0" row="5" colSpan="9" rowSpan="4">
-      <line xPadding="0" showLegend="true" legend-width="14" border-type="line" border-fg="#000" xLabelPadding='1' showNthLabel='4' label='History Timeline'>
+      <line xPadding="0" showLegend="true" legend-width="14" border-type="line" border-fg="yellow" xLabelPadding='1' showNthLabel='4' label='History Timeline'>
         <data>
           <m title="Cases" style-line="red" x="" y=""/>
           <m title="Deaths" style-line="red" x="" y=""/>
@@ -49,7 +49,7 @@
     </item>
 
     <item col="0" row="9" colSpan="9" rowSpan="2">
-      <markdown style-paragraph="chalk.white" style-strong="chalk.cyan.underline" style-em="chalk.green" border-type="line" border-fg="#000">
+      <markdown style-paragraph="chalk.white" style-strong="chalk.cyan.underline" style-em="chalk.green" border-type="line" border-fg="white">
         <markdown></markdown>
       </markdown>   
     </item>   
