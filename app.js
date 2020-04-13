@@ -179,9 +179,4 @@ app.get('/history/charts/:country', async (req, res, next) => {
 app.use('/xterm', express.static(__dirname + '/node_modules/xterm'));
 app.use('/xterm/addons', express.static(__dirname + '/node_modules/xterm-addon-fit'));
 
-app.get('*', (req, res) => res.send(`
-Welcome to COVID-19 Tracker CLI v${pkg.version} by Waren Gonzaga\n
-Please visit: https://warengonza.ga/covid19-tracker-cli
-\n`));
-
 app.listen(port, () => console.log(`COVID-19 Tracker v${pkg.version} is listening on port ${port}!`));
