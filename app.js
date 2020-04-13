@@ -222,9 +222,14 @@ app.get('/history/charts/:country', async (req, res, next) => {
     }
     
 
-
-    const puppeteer = require('puppeteer');
-    const browser = await puppeteer.launch();
+    const chrome = require('chrome-aws-lambda');
+    const puppeteer = require('puppeteer-core');
+    const browser = await puppeteer.launch({
+        args: chrome.args,
+        executablePath: await chrome.executablePath,
+        headless: chrome.headless,
+    });
+    
     const page = await browser.newPage();
     page.setViewport({width: 1440, height: 800})
     await page.goto(req.protocol + '://' + req.get('host') +'/history/charts/web/'+s.country);
