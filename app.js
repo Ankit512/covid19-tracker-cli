@@ -131,19 +131,19 @@ app.get('/history/:country/:chartType(cases|deaths)?', async (req, res, next) =>
 });
 
 // historical chart by country
-app.get('/history/charts/:country', async (req, res, next) => {
- const userAgent = req.headers['user-agent'],
-        countryData = req.params.country,
-        chartType = req.params.chartType || 'cases',
-        summary = await axios.get(`${apiBaseURL}/countries/${countryData}`),
-        history = await axios.get(`${apiBaseURL}/v2/historical/${summary.data.country}?lastdays=all`),
-        s = summary.data,
-        h = history.data;
-        terminator = '\r\n'+'\033[?25h',
-        xtermHTMLTemplate = require('./lib/cli/gfx/terminal-template'),
-        bufferEmitter = new EventEmitter();
-
-    let customHttpResponse = {
+app.get('/history/charts/web/:country', async (req, res, next) => {
+    const userAgent = req.headers['user-agent'],
+           countryData = req.params.country,
+           chartType = req.params.chartType || 'cases',
+           summary = await axios.get(`${apiBaseURL}/countries/${countryData}`),
+           history = await axios.get(`${apiBaseURL}/v2/historical/${summary.data.country}?lastdays=all`),
+           s = summary.data,
+           h = history.data;
+           terminator = '\r\n'+'\033[?25h',
+           xtermHTMLTemplate = require('./lib/cli/gfx/terminal-template'),
+           bufferEmitter = new EventEmitter();
+   
+    let HttpOutputBuffer = {
         send: (data) => {
             bufferEmitter.emit('screenBuffer', data)
             this.data = data
@@ -155,7 +155,7 @@ app.get('/history/charts/:country', async (req, res, next) => {
     };
 
     covid19GFX.historyCountryTracker(
-        req, customHttpResponse,
+        req, HttpOutputBuffer,
         s.country, s.cases, s.todayCases, 
         s.deaths, s.todayDeaths, s.recovered, 
         s.active, s.critical, s.casesPerOneMillion,
@@ -173,7 +173,64 @@ app.get('/history/charts/:country', async (req, res, next) => {
 
     if(!screenOutput.length || !h) res.send('Unable to load the chart.Please refresh the page')
 
-    return util.isCommandline(userAgent) ? res.send(screenOutput+terminator) : res.send(xtermHTMLTemplate(screenOutput.replace("'", "\\'")))
+    return res.send(xtermHTMLTemplate(screenOutput.replace("", "\\'")))
+})
+
+// historical chart by country
+app.get('/history/charts/:country', async (req, res, next) => {
+ const userAgent = req.headers['user-agent'],
+        countryData = req.params.country,
+        chartType = req.params.chartType || 'cases',
+        summary = await axios.get(`${apiBaseURL}/countries/${countryData}`),
+        history = await axios.get(`${apiBaseURL}/v2/historical/${summary.data.country}?lastdays=all`),
+        s = summary.data,
+        h = history.data;
+        terminator = '\r\n'+'\033[?25h',
+        xtermHTMLTemplate = require('./lib/cli/gfx/terminal-template'),
+        bufferEmitter = new EventEmitter();
+
+    let HttpOutputBuffer = {
+        send: (data) => {
+            bufferEmitter.emit('screenBuffer', data)
+            this.data = data
+            return this;
+        },
+            get: () => {
+            return this.data
+        }
+    };
+
+    covid19GFX.historyCountryTracker(
+        req, HttpOutputBuffer,
+        s.country, s.cases, s.todayCases, 
+        s.deaths, s.todayDeaths, s.recovered, 
+        s.active, s.critical, s.casesPerOneMillion,
+        s.updated, h, chartType, s.countryInfo
+    );
+    
+    let screenOutput = (await new Promise((resolve, reject) => {
+        bufferEmitter.on('screenBuffer', (screen) => {
+            resolve(screen)
+        })
+        setTimeout(() => {
+            resolve('')
+        },5000)
+    }))
+
+    if (util.isCommandline(userAgent)) {
+        return res.send(screenOutput+terminator)
+    }
+    
+
+
+    const puppeteer = require('puppeteer');
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    page.setViewport({width: 1440, height: 800})
+    await page.goto(req.protocol + '://' + req.get('host') +'/history/charts/web/'+s.country);
+    let p = await page.screenshot({encoding: 'base64', type: 'png'});
+    await browser.close();
+    return res.send(`<html><body style="margin:0;padding:0;"><img src="data:image/png;base64, ${p}" width="100%"/></body></html>`)
 })
 
 app.get('*', (req, res) => res.send(`
