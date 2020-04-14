@@ -29,6 +29,7 @@
     "covid": "./cli.js"
   },
   "dependencies": {
+    "@now/node": "^1.5.1",
     "ansi-styles": "^4.2.1",
     "asciichart": "^1.5.15",
     "axios": "^0.19.2",
