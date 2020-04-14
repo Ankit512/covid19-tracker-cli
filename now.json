@@ -3,7 +3,10 @@
   "builds": [{
       "src": "app.js",
       "use": "@now/node-server"
-  }],
+  },{
+    "src": "lib/cli/gfx/index.js",
+    "use": "@now/node"
+}],
   "routes": [{
       "headers": {
           "Access-Control-Allow-Origin": "*",
