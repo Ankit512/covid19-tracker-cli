@@ -227,11 +227,12 @@ app.get('/history/charts/:country', async (req, res, next) => {
     const browser = await puppeteer.launch({
         args: chrome.args,
         executablePath: await chrome.executablePath,
-        headless: chrome.headless,
+        headless: false,
+        defaultViewport: {width: 1440, height: 800},
     });
-    
+
     const page = await browser.newPage();
-    page.setViewport({width: 1440, height: 800})
+    //page.setViewport({width: 1440, height: 800})
     await page.goto(req.protocol + '://' + req.get('host') +'/history/charts/web/'+s.country);
     let p = await page.screenshot({encoding: 'base64', type: 'png'});
     await browser.close();
