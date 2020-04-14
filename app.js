@@ -221,7 +221,6 @@ app.get('/history/charts/:country', async (req, res, next) => {
         return res.send(screenOutput+terminator)
     }
     
-
     const chrome = require('chrome-aws-lambda');
     const puppeteer = require('puppeteer-core');
     const browser = await puppeteer.launch({
