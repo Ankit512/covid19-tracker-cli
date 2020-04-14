@@ -234,7 +234,7 @@ app.get('/history/charts/:country', async (req, res, next) => {
     //page.setViewport({width: 1440, height: 800})
     await page.goto(req.protocol + '://' + req.get('host') +'/history/charts/web/'+s.country);
     let p = await page.screenshot({encoding: 'base64', type: 'png'});
-    await browser.close();
+    //await browser.close();
     return res.send(`<html><body style="margin:0;padding:0;"><img src="data:image/png;base64, ${p}" width="100%"/></body></html>`)
 })
 
