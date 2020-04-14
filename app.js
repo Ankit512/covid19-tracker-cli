@@ -226,16 +226,19 @@ app.get('/history/charts/:country', async (req, res, next) => {
     const browser = await puppeteer.launch({
         args: chrome.args,
         executablePath: await chrome.executablePath,
-        headless: false,
+        headless: chrome.headless,
         defaultViewport: {width: 1440, height: 800},
     });
 
     const page = await browser.newPage();
     //page.setViewport({width: 1440, height: 800})
     await page.goto(req.protocol + '://' + req.get('host') +'/history/charts/web/'+s.country);
-    let p = await page.screenshot({encoding: 'base64', type: 'png'});
-    //await browser.close();
-    return res.send(`<html><body style="margin:0;padding:0;"><img src="data:image/png;base64, ${p}" width="100%"/></body></html>`)
+    let p = await page.screenshot({type: 'png'});
+    await browser.close();
+    res.statusCode = 200;
+    res.setHeader('Content-Type', `image/png`);
+    res.end(p);
+    //return res.send(`<html><body style="margin:0;padding:0;"><img src="data:image/png;base64, ${p}" width="100%"/></body></html>`)
 })
 
 app.get('*', (req, res) => res.send(`
